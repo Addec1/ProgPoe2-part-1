@@ -9,56 +9,70 @@ namespace CybersecurityAwarenessBot
     {
         static void Main(string[] args)
         {
-            PlayVoiceGreeting();  // Plays greeting with sound
+            // Play a friendly voice greeting using an audio file
+            PlayVoiceGreeting();
 
+            // Show a cool ASCII logo on the console
             ShowAsciiLogo();
 
+            // Ask the user for their name
             Console.Write("Hi! What's your name? ");
             string name = Console.ReadLine();
 
+            // Default to "User" if no name is entered
             if (string.IsNullOrWhiteSpace(name))
             {
                 name = "User";
             }
 
+            // Change text color to blue and welcome the user
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"Welcome, {name}! I'm your Cybersecurity Awareness Bot.");
+            TypeText($"Welcome, {name}! I'm your Cybersecurity Awareness Bot.");
             Console.ResetColor();
 
+            // Start the chatbot interaction
             RunChatBot();
         }
 
+        // Method to play an audio greeting (WAV file)
         static void PlayVoiceGreeting()
         {
             const string greetingText = "Hello! Welcome to the Cybersecurity Awareness Bot. I'm here to help you stay safe online.";
-            Console.ForegroundColor = ConsoleColor.Blue;
+
+            // Print the greeting text in blue
+            Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine(greetingText);
             Console.ResetColor();
 
+            // Define path to audio file
             string audioFilePath = "Greetings ProgPoe1.wav";
 
             try
             {
+                // Load and play the WAV file
                 using (var audioFile = new AudioFileReader(audioFilePath))
                 using (var outputDevice = new WaveOutEvent())
                 {
                     outputDevice.Init(audioFile);
                     outputDevice.Play();
 
+                    // Wait for the audio to finish playing
                     while (outputDevice.PlaybackState == PlaybackState.Playing)
                     {
-                        Thread.Sleep(100); // Wait while playing
+                        Thread.Sleep(100); // Pause for 100 milliseconds
                     }
                 }
             }
             catch (Exception)
             {
+                // Display an error if audio cannot be played
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("⚠ Could not play 'Greetings ProgPoe1.wav'. Ensure the file exists and is set to 'Copy if newer'.");
+                Console.WriteLine(" Could not play.");
                 Console.ResetColor();
             }
         }
 
+        // Method to display an ASCII logo for visual effect
         static void ShowAsciiLogo()
         {
             Console.ForegroundColor = ConsoleColor.DarkGreen;
@@ -68,21 +82,21 @@ namespace CybersecurityAwarenessBot
   /            \
  |              |
  |,  .-.  .-.  ,|
- | )(_o/  \o_)( |
+ | )(_0/  \0_)( |
  |/     /\     \|
  (_     ^^     _)
   \__|IIIIII|__/
    | \IIIIII/ |
    \          /
-    `--------`               
-    
-                                                                     
+    --------               
 ");
             Console.ResetColor();
         }
 
+        // Method to handle the chatbot interaction with the user
         static void RunChatBot()
         {
+            // Dictionary of common cybersecurity questions and responses
             var responses = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 { "how are you", "I'm just code, but I'm functioning as expected! Ready to help you with cybersecurity advice." },
@@ -107,60 +121,77 @@ namespace CybersecurityAwarenessBot
                 { "breach", "A breach is an incident where sensitive, protected, or confidential data is accessed or disclosed without authorization." }
             };
 
+            // Begin chatbot loop
             while (true)
             {
                 Console.Write("\nAsk me a question about cybersecurity (or type 'exit' to leave): ");
                 string input = Console.ReadLine()?.Trim();
 
+                // Handle empty input
                 if (string.IsNullOrWhiteSpace(input))
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Please enter a valid question. Examples: VPN, Firewall, Botnet.");
+                    TypeText("Please enter a valid question. Examples: VPN, Firewall, Botnet.");
                     Console.ResetColor();
                     continue;
                 }
 
+                // Exit command
                 if (input.Equals("exit", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("Goodbye! Stay safe online.");
+                    TypeText("Goodbye! Stay safe online.");
                     Console.ResetColor();
                     break;
                 }
 
                 string lowerInput = input.ToLower();
 
+                // Provide an answer if it's in the dictionary
                 if (responses.TryGetValue(lowerInput, out string answer))
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine(answer);
+                    TypeText(answer);
                     Console.ResetColor();
                 }
+                // Handle specific common phrases manually
                 else if (lowerInput.Contains("how are you"))
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("I'm doing great, thanks for asking! I'm always here to talk cybersecurity.");
+                    TypeText("I'm doing great, thanks for asking! I'm always here to talk cybersecurity.");
                     Console.ResetColor();
                 }
                 else if (lowerInput.Contains("what") && lowerInput.Contains("purpose"))
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("My purpose is to help you become more aware of cybersecurity threats and how to stay safe online.");
+                    TypeText("My purpose is to help you become more aware of cybersecurity threats and how to stay safe online.");
                     Console.ResetColor();
                 }
                 else if (lowerInput.Contains("what can i ask") || lowerInput.Contains("help") || lowerInput.Contains("topics"))
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("You can ask me about VPNs, phishing, malware, ransomware, firewalls, botnets, and many more cybersecurity topics!");
+                    TypeText("You can ask me about VPNs, phishing, malware, ransomware, firewalls, botnets, and many more cybersecurity topics!");
                     Console.ResetColor();
                 }
+                // Default fallback response
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("I didn't quite get that, could you please rephrase?");
+                    TypeText("I didn't quite get that, could you please rephrase?");
                     Console.ResetColor();
                 }
             }
         }
+
+        // Method to simulate typing effect for chatbot responses
+        static void TypeText(string text)
+        {
+            foreach (char c in text)
+            {
+                Console.Write(c);  // Print each character
+                Thread.Sleep(50);  // Delay for a realistic typing effect (adjust timing for speed)
+            }
+            Console.WriteLine();  // Move to the next line after the response
+        }
     }
-}
+}  
