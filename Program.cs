@@ -28,7 +28,6 @@ namespace CybersecurityAwarenessBot
             // Change text color to blue and welcome the user
             Console.ForegroundColor = ConsoleColor.Blue;
             TypeText($"Welcome, {name}! I'm your Cybersecurity Awareness Bot.");
-            TypeText("You can type 'info' to see what I can do.");
             Console.ResetColor();
 
             // Start the chatbot interaction
@@ -125,17 +124,19 @@ namespace CybersecurityAwarenessBot
             // Begin chatbot loop
             while (true)
             {
-                Console.Write("\nAsk me a question about cybersecurity (or type 'info' to see all topics, or 'exit' to leave): ");
+                Console.Write("\nAsk me a question about cybersecurity (or type 'info' to see keywords, 'exit' to leave): ");
                 string input = Console.ReadLine()?.Trim();
 
+                // Handle empty input
                 if (string.IsNullOrWhiteSpace(input))
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    TypeText("Please enter a valid question. Examples: VPN, Firewall, Botnet.");
+                    TypeText("Please enter a valid input. Type 'info' to see what I can help with.");
                     Console.ResetColor();
                     continue;
                 }
 
+                // Exit command
                 if (input.Equals("exit", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
@@ -144,28 +145,32 @@ namespace CybersecurityAwarenessBot
                     break;
                 }
 
+                // Info command
                 if (input.Equals("info", StringComparison.OrdinalIgnoreCase))
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    TypeText("Here’s a list of cybersecurity topics I can help you with:\n");
-
-                    foreach (var entry in responses)
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    TypeText("Here are the keywords you can ask about:");
+                    foreach (var keyword in responses.Keys)
                     {
-                        TypeText($"- {entry.Key}: {entry.Value}");
+                        if (keyword != "how are you" && keyword != "what's your purpose")
+                        {
+                            Console.WriteLine("- " + keyword);
+                        }
                     }
-
                     Console.ResetColor();
                     continue;
                 }
 
                 string lowerInput = input.ToLower();
 
+                // Provide an answer if it's in the dictionary
                 if (responses.TryGetValue(lowerInput, out string answer))
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
                     TypeText(answer);
                     Console.ResetColor();
                 }
+                // Handle specific common phrases manually
                 else if (lowerInput.Contains("how are you"))
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
@@ -184,6 +189,7 @@ namespace CybersecurityAwarenessBot
                     TypeText("You can ask me about VPNs, phishing, malware, ransomware, firewalls, botnets, and many more cybersecurity topics!");
                     Console.ResetColor();
                 }
+                // Default fallback response
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Blue;
